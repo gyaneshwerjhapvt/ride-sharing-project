@@ -1,5 +1,5 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
+import { DataTypes } from "sequelize";
+import sequelize from "../config/db.js";
 
 const Vehicle = sequelize.define(
   "Vehicle",
@@ -7,43 +7,39 @@ const Vehicle = sequelize.define(
     vehicle_id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true
+      autoIncrement: true,
     },
-
     driver_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      unique: true 
+      unique: true,
     },
-
     make: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
-
     model: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
-
     plate_number: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+      unique: true,
     },
-
     color: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      allowNull: true,
     },
-
     year: {
-      type: DataTypes.INTEGER
-    }
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
   },
   {
     tableName: "vehicle",
-    timestamps: false
+    timestamps: false,
   }
 );
 
-module.exports = Vehicle;
+export default Vehicle;

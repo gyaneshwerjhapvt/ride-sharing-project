@@ -1,5 +1,5 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db');
+import { DataTypes } from "sequelize";
+import sequelize from "../config/db.js";
 
 const Payment = sequelize.define(
   "Payment",
@@ -7,35 +7,35 @@ const Payment = sequelize.define(
     payment_id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true
+      autoIncrement: true,
     },
     ride_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      unique: true
+      unique: true,
     },
     amount: {
       type: DataTypes.DECIMAL(10, 2),
-      allowNull: false
+      allowNull: false,
     },
     method: {
       type: DataTypes.ENUM("cash", "credit_card", "wallet", "upi"),
-      allowNull: false
+      allowNull: false,
     },
     status: {
       type: DataTypes.ENUM("pending", "completed", "failed"),
-      allowNull: false
+      allowNull: false,
     },
     payment_date: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: DataTypes.NOW
-    }
+      defaultValue: DataTypes.NOW,
+    },
   },
   {
     tableName: "payment",
-    timestamps: false
+    timestamps: false,
   }
 );
 
-module.exports = Payment;
+export default Payment;

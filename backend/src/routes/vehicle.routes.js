@@ -1,15 +1,9 @@
-const express = require("express");
+import express from "express";
+import * as controller from "../controllers/vehicle.controller.js";
+
 const router = express.Router();
-const vehicleController = require("../controllers/vehicle.controller");
 
-router.post(
-  "/create",
-  vehicleController.registerVehicle
-);
+router.post("/create", controller.registerVehicle);
+router.get("/drivers/:driver_id", controller.getVehicleByDriverId);
 
-router.get(
-  "/drivers/:driverId/",
-  vehicleController.getVehicleByDriverId
-);
-
-module.exports = router;
+export default router;

@@ -1,39 +1,37 @@
-const express = require('express');
+import express from "express";
+import { sequelize } from "./models/index.js";
+
+import userRoutes from "./routes/user.routes.js";
+import rideRoutes from "./routes/ride.routes.js";
+import vehicleRoutes from "./routes/vehicle.routes.js";
+import paymentRoutes from "./routes/payment.routes.js";
+import ratingRoutes from "./routes/rating.routes.js";
+
 const app = express();
 
-require('./models');
-const sequelize = require('./config/db');
-
-// Middleware
 app.use(express.json());
 
-// Import Routes
-const userRoutes = require('./routes/user.routes');
-const rating_routes = require('./routes/rating.routes');
-const paymentRoutes = require('./routes/payment.routes');
-const vehicleRoutes = require('./routes/vehicle.routes');
-const rideRoutes = require('./routes/ride.routes');
+// Routes
+app.use("/api/users", userRoutes);
+app.use("/api/rides", rideRoutes);
+app.use("/api/vehicles", vehicleRoutes);
+app.use("/api/payments", paymentRoutes);
+app.use("/api/ratings", ratingRoutes);
 
-// Use Routes
-app.use('/users', userRoutes);
-app.use('/ratings', rating_routes);
-app.use('/payment', paymentRoutes);
-app.use('/vehicles', vehicleRoutes);
-app.use('/rides', rideRoutes);
+const PORT = process.env.PORT || 3000;
 
+sequelize
+  .sync({ alter: true })
+  .then(() => {
+    console.log("Database synced");
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Failed to sync db: ", err);
+  });
 
-// Test DB connection
-(async () => {
-    try {
-        await sequelize.authenticate();
-        await sequelize.sync();
-        console.log("Database Connected");
-    } catch (error) {
-        console.error('Startup error:', error.message);
-    }
-})();
-
-// Start Server
 app.listen(3000, () => {
-console.log('Server running on port 3000');
+  console.log("Server running on port 3000");
 });

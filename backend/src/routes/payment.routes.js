@@ -1,17 +1,9 @@
-const express = require("express");
+import express from "express";
+import * as controller from "../controllers/payment.controller.js";
+
 const router = express.Router();
-const paymentController = require("../controllers/payment.controller");
 
+router.post("/rides/:ride_id", controller.createOrUpdatePayment);
+router.get("/rides/:ride_id", controller.getPaymentByRide);
 
-router.post(
-  "/rides/:rideId/",
-  paymentController.createOrUpdatePayment
-);
-
-
-router.get(
-  "/rides/:rideId/",
-  paymentController.getPaymentByRide
-);
-
-module.exports = router;
+export default router;

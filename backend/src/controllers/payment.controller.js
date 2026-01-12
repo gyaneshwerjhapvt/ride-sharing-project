@@ -1,77 +1,46 @@
-const  Payment  = require("../models/Payment");
-const Ride = require("../models/Ride");
+import { Payment, Ride } from "../models/index.js";
 
-exports.createOrUpdatePayment = async (req, res) => {
+export const createOrUpdatePayment = async (req, res) => {
   try {
-    const { rideId } = req.params;
+    const { ride_id } = req.params;
     const { amount, method, status } = req.body;
 
-    const ride = await Ride.findByPk(rideId);
-    if (!ride) {
-      return res.status(404).json({ message: "Ride not found" });
-    }
+    const ride = await Ride.findByPk(ride_id);
+    if (!ride) return res.status(404).json({ message: "Ride not found" });
 
     if (ride.status !== "completed") {
-      return res.status(400).json({
-        message: "Payment allowed only after ride completion"
-      });
+      return res
+        .status(400)
+        .json({ message: "Ride must be completed before payment" });
     }
 
-    const existingPayment = await Payment.findOne({
-      where: { ride_id: rideId }
-    });
+    let payment = await Payment.findOne({ where: { ride_id } });
 
-    if (existingPayment) {
-      await existingPayment.update({
+    if (payment) {
+      await payment.update({
         amount,
         method,
         status,
-        payment_date: new Date()
+        payment_date: new Date(),
       });
-
-      return res.status(200).json({
-        message: "Payment updated",
-        payment: existingPayment
-      });
+      return res.status(200).json({ message: "Payment updated", payment });
     }
 
-    const payment = await Payment.create({
-      ride_id: rideId,
-      amount,
-      method,
-      status
-    });
-
-    return res.status(201).json({
-      message: "Payment created",
-      payment
-    });
-
+    payment = await Payment.create({ ride_id, amount, method, status });
+    return res.status(201).json({ message: "Payment created", payment });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Payment processing failed" });
+    res.status(500).json({ message: err.message });
   }
 };
 
-// Get payment by ride
- 
-exports.getPaymentByRide = async (req, res) => {
+export const getPaymentByRide = async (req, res) => {
   try {
-    const { rideId } = req.params;
+    const { ride_id } = req.params;
+    const payment = await Payment.findOne({ where: { ride_id } });
 
-    const payment = await Payment.findOne({
-      where: { ride_id: rideId }
-    });
-
-    if (!payment) {
-      return res.status(404).json({
-        message: "No payment found for this ride"
-      });
-    }
-
+    if (!payment) return res.status(404).json({ message: "No payment found" });
     res.status(200).json(payment);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error fetching payment" });
+    res.status(500).json({ message: err.message });
   }
 };
