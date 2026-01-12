@@ -1,7 +1,6 @@
 import { gql } from "apollo-server-express";
 
 const typeDefs = gql`
-  # Define the vehicle structure
   type Vehicle {
     vehicle_id: ID!
     driver_id: Int!
@@ -21,12 +20,19 @@ const typeDefs = gql`
     comment: String
   }
 
-  # Inputs for creating data
   input VehicleInput {
     driver_id: Int!
     make: String!
     model: String!
     plate_number: String!
+    color: String
+    year: Int
+  }
+
+  input VehicleUpdateInput {
+    make: String
+    model: String
+    plate_number: String
     color: String
     year: Int
   }
@@ -46,10 +52,12 @@ const typeDefs = gql`
     getRatingsByUser(user_id: Int!): [Rating]
   }
 
-  # Root Mutation
   type Mutation {
     registerVehicle(input: VehicleInput!): Vehicle
     addRating(input: RatingInput!): Rating
+
+    updateVehicle(driver_id: Int!, input: VehicleUpdateInput!): Vehicle
+    deleteVehicle(driver_id: Int!): String
   }
 `;
 
