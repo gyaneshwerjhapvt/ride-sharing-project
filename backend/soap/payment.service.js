@@ -24,7 +24,7 @@ const paymentService = {
             message: `Payment of ${args.amount} processed successfully.`,
           };
         } catch (error) {
-          console.error("SOAP Processing Error:", error);
+          console.error(`SOAP Processing Error:`, error);
           throw {
             Fault: {
               Code: {
