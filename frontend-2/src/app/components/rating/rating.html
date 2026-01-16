@@ -1,0 +1,30 @@
+<div class="rating-card">
+  <h3>Rate your experience</h3>
+  
+  <div class="stars">
+    @for (star of stars; track star) {
+      <span 
+        class="star"
+        [class.active]="(hoveredScore() ?? selectedScore()) >= star"
+        (mouseenter)="setHover(star)"
+        (mouseleave)="setHover(null)"
+        (click)="setRating(star)">
+        ★
+      </span>
+    }
+  </div>
+
+  <div class="comment-section">
+    <textarea 
+      [(ngModel)]="comment" 
+      placeholder="Write a comment (optional)..."
+      rows="3">
+    </textarea>
+  </div>
+
+  <button 
+    [disabled]="selectedScore() === 0 || isSubmitting()" 
+    (click)="submit()">
+    {{ isSubmitting() ? 'Submitting...' : 'Submit Rating' }}
+  </button>
+</div>
