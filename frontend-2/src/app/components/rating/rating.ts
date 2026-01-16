@@ -1,61 +1,103 @@
-import { Component, Input, inject, signal } from '@angular/core';
+// src/app/components/rating/rating.ts
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RatingService } from '../../services/rating';
 import { Rating } from '../../models/rating.model';
+import { RatingService } from '../../services/rating-service';
 
 @Component({
   selector: 'app-rating',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './rating.component.html',
-  styleUrls: ['./rating.component.scss'],
+  templateUrl: './rating.html',
+  styleUrls: ['./rating.css'],
 })
 export class RatingComponent {
-  private ratingService = inject(RatingService);
+  showAddModal: boolean = false;
+  showViewModal: boolean = false;
+  newRating: {
+    ride_id: number | null;
+    given_to: number | null;
+    score: number | null;
+    comment: string;
+  } = { ride_id: null, given_to: null, score: null, comment: '' };
+  ratings: Rating[] = [];
+  currentUser: any = { user_id: 1 };
 
-  @Input() rideId!: number;
-  @Input() givenBy!: number;
-  @Input() givenTo!: number;
+  constructor(private ratingService: RatingService) {}
 
-  stars = [1, 2, 3, 4, 5];
-  selectedScore = signal<number>(0);
-  hoveredScore = signal<number | null>(null);
-  comment = '';
-  isSubmitting = signal(false);
-
-  setRating(score: number) {
-    this.selectedScore.set(score);
+  openAddRatingModal(): void {
+    this.showAddModal = true;
   }
 
-  setHover(score: number | null) {
-    this.hoveredScore.set(score);
+  closeAddModal(): void {
+    this.showAddModal = false;
+    this.newRating = { ride_id: null, given_to: null, score: null, comment: '' };
   }
 
-  submit() {
-    if (this.selectedScore() === 0) {
-      alert('Please select a rating before submitting.');
+  openViewRatingsModal(): void {
+    this.loadRatings();
+    this.showViewModal = true;
+  }
+
+  closeViewModal(): void {
+    this.showViewModal = false;
+  }
+
+  submitRating(): void {
+    const rideId = Number(this.newRating.ride_id);
+    const givenTo = Number(this.newRating.given_to);
+    const score = Number(this.newRating.score);
+
+    if (
+      isNaN(rideId) ||
+      rideId <= 0 ||
+      isNaN(givenTo) ||
+      givenTo <= 0 ||
+      isNaN(score) ||
+      score < 1 ||
+      score > 5
+    ) {
+      alert('Valid Ride ID, User ID to Rate (positive integers), and Rating (1-5) are required.');
       return;
     }
 
-    this.isSubmitting.set(true);
-
-    const newRating: Rating = {
-      ride_id: this.rideId,
-      given_by: this.givenBy,
-      given_to: this.givenTo,
-      score: this.selectedScore(),
-      comment: this.comment,
+    const input = {
+      ride_id: rideId,
+      given_by: this.currentUser.user_id,
+      given_to: givenTo,
+      score: score,
+      comment: this.newRating.comment || null,
     };
 
-    this.ratingService.submitRating(newRating).subscribe({
-      next: (res) => {
-        alert('Rating submitted successfully!');
-        this.isSubmitting.set(false);
+    this.ratingService.addRating(input).subscribe({
+      next: (response) => {
+        if (response.data) {
+          alert('Rating submitted successfully!');
+          this.closeAddModal();
+        } else if (response.errors) {
+          alert(`Error: ${response.errors[0].message}`);
+        }
       },
       error: (err) => {
-        console.error('Submission failed', err);
-        this.isSubmitting.set(false);
+        alert(`Error: ${err.message}`);
+      },
+    });
+  }
+
+  private loadRatings(): void {
+    this.ratingService.getRatingsByUser(this.currentUser.user_id).subscribe({
+      next: (response) => {
+        if (response.data) {
+          this.ratings = response.data.getRatingsByUser || [];
+        } else if (response.errors) {
+          this.ratings = [];
+          alert(`Error: ${response.errors[0].message}`);
+        }
+      },
+      error: (err) => {
+        this.ratings = [];
+        alert(`Error: ${err.message}`);
       },
     });
   }
