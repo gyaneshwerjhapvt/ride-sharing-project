@@ -1,3 +1,6 @@
+<!-- types -> all the data type using xml schema -->
+<!--  -->
+
 <definitions name="PaymentService"
              targetNamespace="http://localhost:3000/soap/payment"
              xmlns="http://schemas.xmlsoap.org/wsdl/"
