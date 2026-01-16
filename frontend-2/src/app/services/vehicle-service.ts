@@ -15,8 +15,8 @@ export class VehicleService {
   // Get vehicle by driver
   getVehicleByDriver(driverId: number): Observable<any> {
     const query = `
-      query {
-        getVehicleByDriver(driver_id: ${driverId}) {
+      query GetVehicleByDriver($driver_id: Int!) {
+        getVehicleByDriver(driver_id: $driver_id) {
           vehicle_id
           plate_number
           make
@@ -26,58 +26,64 @@ export class VehicleService {
         }
       }
     `;
-    return this.http.post<any>(`${this.baseUrl}`, { query });
+    return this.http.post<any>(this.baseUrl, { 
+      query, 
+      variables: { driver_id: driverId } 
+    });
   }
 
   // Register vehicle
   registerVehicle(vehicle: any): Observable<any> {
     const mutation = `
-      mutation {
-        registerVehicle(input: {
-          make: "${vehicle.make}"
-          model: "${vehicle.model}"
-          plate_number: "${vehicle.plate_number}"
-          color: "${vehicle.color}"
-          year: ${vehicle.year}
-          driver_id: ${vehicle.driver_id}
-        }) {
+      mutation RegisterVehicle($input: VehicleInput!) {
+        registerVehicle(input: $input) {
           vehicle_id
+          driver_id
           make
+          model
           plate_number
+          color
+          year
         }
       }
     `;
-    return this.http.post<any>(`${this.baseUrl}`, { query: mutation });
+    return this.http.post<any>(this.baseUrl, { 
+      query: mutation, 
+      variables: { input: vehicle } 
+    });
   }
 
   // Update vehicle
   updateVehicle(driverId: number, vehicle: any): Observable<any> {
     const mutation = `
-      mutation {
-        updateVehicle(input: {
-          driver_id: ${driverId}
-          make: "${vehicle.make}"
-          plate_number: "${vehicle.plate_number}"
-          color: "${vehicle.color}"
-        }) {
+      mutation UpdateVehicle($driver_id: Int!, $input: VehicleUpdateInput!) {
+        updateVehicle(driver_id: $driver_id, input: $input) {
           vehicle_id
+          driver_id
           make
+          model
           plate_number
+          color
+          year
         }
       }
     `;
-    return this.http.post<any>(`${this.baseUrl}`, { query: mutation });
+    return this.http.post<any>(this.baseUrl, { 
+      query: mutation, 
+      variables: { driver_id: driverId, input: vehicle } 
+    });
   }
 
   // Delete vehicle
   deleteVehicle(driverId: number): Observable<any> {
     const mutation = `
-      mutation {
-        deleteVehicle(driver_id: ${driverId}) {
-          success
-        }
+      mutation DeleteVehicle($driver_id: Int!) {
+        deleteVehicle(driver_id: $driver_id)
       }
     `;
-    return this.http.post<any>(`${this.baseUrl}`, { query: mutation });
+    return this.http.post<any>(this.baseUrl, { 
+      query: mutation, 
+      variables: { driver_id: driverId } 
+    });
   }
 }

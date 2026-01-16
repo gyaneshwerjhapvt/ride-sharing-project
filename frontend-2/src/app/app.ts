@@ -1,13 +1,44 @@
-
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit, inject } from '@angular/core';
+import { RouterOutlet, RouterLink, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [RouterOutlet, RouterLink, CommonModule],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrls: ['./app.css']
 })
-export class App {
-  protected readonly title = signal('frontend-2');
+export class App implements OnInit {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  
+  user = this.authService.user;
+
+  ngOnInit(): void {
+    // Load user from localStorage on app init
+    this.authService.loadUserFromStorage();
+  }
+
+  isAuthenticated(): boolean {
+    return this.authService.isAuthenticated();
+  }
+
+  isDriver(): boolean {
+    return this.authService.isDriver();
+  }
+
+  isRider(): boolean {
+    return this.authService.isRider();
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/auth']);
+  }
+
+  navigateToAuth(): void {
+    this.router.navigate(['/auth']);
+  }
 }

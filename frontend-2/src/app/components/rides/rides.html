@@ -1,0 +1,171 @@
+<div class="rides-container">
+  @if (errorMessage()) {
+    <div class="alert alert-error">
+      <span class="icon">⚠️</span> {{ errorMessage() }}
+    </div>
+  }
+
+  @if (successMessage()) {
+    <div class="alert alert-success">
+      <span class="icon">✅</span> {{ successMessage() }}
+    </div>
+  }
+
+  <!-- Rider Dashboard -->
+  @if (isRider) {
+    <div class="service-card">
+      <div class="card-header">
+        <i class="fas fa-route"></i>
+        <h3>Request a Ride</h3>
+      </div>
+      <div class="card-body">
+        <input 
+          type="text" 
+          [(ngModel)]="pickupLocation" 
+          placeholder="Pickup Location" 
+          [disabled]="isLoading()">
+        <input 
+          type="text" 
+          [(ngModel)]="dropLocation" 
+          placeholder="Drop Location" 
+          [disabled]="isLoading()">
+        <button 
+          (click)="requestRide()" 
+          class="btn-primary btn-block" 
+          [disabled]="isLoading() || !pickupLocation.trim() || !dropLocation.trim()">
+          @if (isLoading()) {
+            <span class="spinner"></span> Requesting...
+          } @else {
+            <i class="fas fa-taxi"></i> Request Ride
+          }
+        </button>
+      </div>
+    </div>
+
+    <div class="service-card">
+      <div class="card-header">
+        <i class="fas fa-history"></i>
+        <h3>My Rides</h3>
+      </div>
+      <div class="card-body">
+        <button (click)="loadRides()" class="btn-secondary btn-block" [disabled]="isLoading()">
+          <i class="fas fa-sync"></i> Refresh Rides
+        </button>
+        
+        @if (isLoading()) {
+          <div class="loading-state">Loading rides...</div>
+        } @else if (myRides.length === 0) {
+          <div class="empty-state">No rides yet. Request a ride to get started!</div>
+        } @else {
+          <div class="rides-list">
+            @for (ride of myRides; track ride.ride_id) {
+              <div class="ride-item ride-{{ride.status}}">
+                <div class="ride-header">
+                  <span class="ride-id">Ride #{{ ride.ride_id }}</span>
+                  <span class="badge {{ getStatusBadgeClass(ride.status) }}">{{ ride.status.toUpperCase() }}</span>
+                </div>
+                <div class="ride-details">
+                  <p><i class="fas fa-map-marker-alt"></i> <strong>From:</strong> {{ ride.pickup_location }}</p>
+                  <p><i class="fas fa-map-marker-alt"></i> <strong>To:</strong> {{ ride.drop_location }}</p>
+                  <p><i class="fas fa-rupee-sign"></i> <strong>Fare:</strong> ₹{{ ride.fare || 'N/A' }}</p>
+                  @if (ride.driver_id) {
+                    <p><i class="fas fa-user"></i> <strong>Driver ID:</strong> {{ ride.driver_id }}</p>
+                  }
+                </div>
+                @if (ride.status === 'requested') {
+                  <button (click)="cancelRide(ride.ride_id)" class="btn-danger btn-sm" [disabled]="isLoading()">
+                    Cancel
+                  </button>
+                }
+                @if (ride.status === 'ongoing') {
+                  <p class="text-info"><i class="fas fa-spinner fa-spin"></i> Ride in progress...</p>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Driver Dashboard -->
+  @if (isDriver) {
+    <div class="service-card">
+      <div class="card-header">
+        <i class="fas fa-clock"></i>
+        <h3>Available Rides</h3>
+      </div>
+      <div class="card-body">
+        <button (click)="loadRides()" class="btn-accent btn-block" [disabled]="isLoading()">
+          <i class="fas fa-sync"></i> Refresh Available Rides
+        </button>
+        
+        @if (isLoading()) {
+          <div class="loading-state">Loading rides...</div>
+        } @else if (availableRides.length === 0) {
+          <div class="empty-state">No available rides at the moment.</div>
+        } @else {
+          <div class="rides-list">
+            @for (ride of availableRides; track ride.ride_id) {
+              <div class="ride-item ride-available">
+                <div class="ride-header">
+                  <span class="ride-id">Ride #{{ ride.ride_id }}</span>
+                  <span class="badge badge-requested">AVAILABLE</span>
+                </div>
+                <div class="ride-details">
+                  <p><i class="fas fa-user"></i> <strong>Rider ID:</strong> {{ ride.rider_id }}</p>
+                  <p><i class="fas fa-map-marker-alt"></i> <strong>From:</strong> {{ ride.pickup_location }}</p>
+                  <p><i class="fas fa-map-marker-alt"></i> <strong>To:</strong> {{ ride.drop_location }}</p>
+                  <p><i class="fas fa-rupee-sign"></i> <strong>Fare:</strong> ₹{{ ride.fare || 'N/A' }}</p>
+                </div>
+                <button (click)="acceptRide(ride.ride_id)" class="btn-accent btn-sm" [disabled]="isLoading()">
+                  <i class="fas fa-check"></i> Accept Ride
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="service-card">
+      <div class="card-header">
+        <i class="fas fa-road"></i>
+        <h3>My Accepted Rides</h3>
+      </div>
+      <div class="card-body">
+        @if (isLoading()) {
+          <div class="loading-state">Loading rides...</div>
+        } @else if (myRides.length === 0) {
+          <div class="empty-state">No accepted rides yet.</div>
+        } @else {
+          <div class="rides-list">
+            @for (ride of myRides; track ride.ride_id) {
+              <div class="ride-item ride-{{ride.status}}">
+                <div class="ride-header">
+                  <span class="ride-id">Ride #{{ ride.ride_id }}</span>
+                  <span class="badge {{ getStatusBadgeClass(ride.status) }}">{{ ride.status.toUpperCase() }}</span>
+                </div>
+                <div class="ride-details">
+                  <p><i class="fas fa-user"></i> <strong>Rider ID:</strong> {{ ride.rider_id }}</p>
+                  <p><i class="fas fa-map-marker-alt"></i> <strong>Route:</strong> {{ ride.pickup_location }} → {{ ride.drop_location }}</p>
+                  <p><i class="fas fa-rupee-sign"></i> <strong>Fare:</strong> ₹{{ ride.fare || 'N/A' }}</p>
+                </div>
+                @if (ride.status === 'ongoing') {
+                  <div class="ride-actions">
+                    <button (click)="completeRide(ride.ride_id)" class="btn-success btn-sm" [disabled]="isLoading()">
+                      <i class="fas fa-check-circle"></i> Complete Ride
+                    </button>
+                    <button (click)="cancelRide(ride.ride_id)" class="btn-danger btn-sm" [disabled]="isLoading()">
+                      Cancel
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

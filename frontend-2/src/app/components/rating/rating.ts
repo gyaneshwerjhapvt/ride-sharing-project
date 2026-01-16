@@ -1,63 +1,135 @@
-import { Component, Input, inject, signal } from '@angular/core';
+// src/app/components/rating/rating.ts
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-import { RatingService } from '../../services/rating';
 import { Rating } from '../../models/rating.model';
+import { RatingService } from '../../services/rating-service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-rating',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './rating.html',
   styleUrls: ['./rating.css'],
-  providers: [RatingService]
 })
 export class RatingComponent {
   private ratingService = inject(RatingService);
-
-  @Input() rideId!: number;
-  @Input() givenBy!: number;
-  @Input() givenTo!: number;
-
-  stars = [1, 2, 3, 4, 5];
-  selectedScore = signal<number>(0);
-  hoveredScore = signal<number | null>(null);
-  comment = '';
-  isSubmitting = signal(false);
-
-  setRating(score: number) {
-    this.selectedScore.set(score);
+  private authService = inject(AuthService);
+  
+  showAddModal = signal(false);
+  showViewModal = signal(false);
+  isLoading = signal(false);
+  errorMessage = signal<string | null>(null);
+  
+  newRating: {
+    ride_id: number | null;
+    given_to: number | null;
+    score: number | null;
+    comment: string;
+  } = { ride_id: null, given_to: null, score: null, comment: '' };
+  
+  ratings: Rating[] = [];
+  
+  get currentUser() {
+    return this.authService.getUser();
   }
 
-  setHover(score: number | null) {
-    this.hoveredScore.set(score);
+  openAddRatingModal(): void {
+    this.showAddModal.set(true);
+    this.errorMessage.set(null);
   }
 
-  submit() {
-    if (this.selectedScore() === 0) {
-      alert('Please select a rating before submitting.');
+  closeAddModal(): void {
+    this.showAddModal.set(false);
+    this.newRating = { ride_id: null, given_to: null, score: null, comment: '' };
+    this.errorMessage.set(null);
+  }
+
+  openViewRatingsModal(): void {
+    this.loadRatings();
+    this.showViewModal.set(true);
+  }
+
+  closeViewModal(): void {
+    this.showViewModal.set(false);
+  }
+
+  submitRating(): void {
+    const rideId = Number(this.newRating.ride_id);
+    const givenTo = Number(this.newRating.given_to);
+    const score = Number(this.newRating.score);
+
+    if (
+      isNaN(rideId) ||
+      rideId <= 0 ||
+      isNaN(givenTo) ||
+      givenTo <= 0 ||
+      isNaN(score) ||
+      score < 1 ||
+      score > 5
+    ) {
+      this.errorMessage.set('Valid Ride ID, User ID to Rate (positive integers), and Rating (1-5) are required.');
       return;
     }
 
-    this.isSubmitting.set(true);
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
 
-    const newRating: Rating = {
-      ride_id: this.rideId,
-      given_by: this.givenBy,
-      given_to: this.givenTo,
-      score: this.selectedScore(),
-      comment: this.comment,
+    if (!this.currentUser) {
+      this.errorMessage.set('Please login to submit a rating.');
+      this.isLoading.set(false);
+      return;
+    }
+
+    const input = {
+      ride_id: rideId,
+      given_by: this.currentUser.user_id,
+      given_to: givenTo,
+      score: score,
+      comment: this.newRating.comment || null,
     };
 
-    this.ratingService.submitRating(newRating).subscribe({
-      next: (res: any) => {
-        alert('Rating submitted successfully!');
-        this.isSubmitting.set(false);
+    this.ratingService.addRating(input).subscribe({
+      next: (response) => {
+        if (response.data?.addRating) {
+          alert('Rating submitted successfully!');
+          this.closeAddModal();
+        } else if (response.errors) {
+          this.errorMessage.set(`Error: ${response.errors[0].message}`);
+        }
+        this.isLoading.set(false);
       },
-      error: (err: any) => {
-        console.error('Submission failed', err);
-        this.isSubmitting.set(false);
+      error: (err) => {
+        this.errorMessage.set(`Error: ${err.message || 'Failed to submit rating'}`);
+        this.isLoading.set(false);
+        console.error('Rating submission error:', err);
+      },
+    });
+  }
+
+  private loadRatings(): void {
+    if (!this.currentUser) {
+      this.errorMessage.set('Please login to view ratings.');
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.ratingService.getRatingsByUser(this.currentUser.user_id).subscribe({
+      next: (response) => {
+        if (response.data?.getRatingsByUser) {
+          this.ratings = response.data.getRatingsByUser || [];
+        } else if (response.errors) {
+          this.ratings = [];
+          this.errorMessage.set(`Error: ${response.errors[0].message}`);
+        }
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        this.ratings = [];
+        this.errorMessage.set(`Error: ${err.message || 'Failed to load ratings'}`);
+        this.isLoading.set(false);
+        console.error('Load ratings error:', err);
       },
     });
   }

@@ -5,6 +5,9 @@ const resolvers = {
     getVehicleByDriver: async (_, { driver_id }) => {
       return await Vehicle.findOne({ where: { driver_id } });
     },
+    getDriverRatings: async (_, { driver_id }) => {
+      return await Rating.findAll({ where: { given_to: driver_id } });
+    },
     getRatingsByRide: async (_, { ride_id }) => {
       return await Rating.findAll({ where: { ride_id } });
     },
@@ -52,6 +55,17 @@ const resolvers = {
     },
 
     addRating: async (_, { input }) => {
+      const { given_by, given_to } = input;
+      const fromUser = await User.findByPk(given_by);
+      const toUser = await User.findByPk(given_to);
+
+      if (!fromUser) {
+        throw new Error("Invalid 'given_by' user ID");
+      }
+      if (!toUser) {
+        throw new Error("Invalid 'given_to' user ID");
+      }
+
       return await Rating.create(input);
     },
   },

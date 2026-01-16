@@ -1,1 +1,38 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global Styles */
+* {
+  box-sizing: border-box;
+}
+
+/* Disable browser's native validation UI that can block clicks */
+input::-webkit-validation-bubble,
+input::-webkit-validation-bubble-message,
+select::-webkit-validation-bubble,
+select::-webkit-validation-bubble-message {
+  display: none !important;
+}
+
+/* Ensure buttons are always clickable */
+button, a {
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 10;
+}
+
+/* Remove any overlay that might block interactions */
+body {
+  position: relative;
+}
+
+/* Ensure form elements don't have blocking overlays */
+form {
+  position: relative;
+  z-index: 1;
+}
+
+/* Make sure submit buttons are on top */
+button[type="submit"],
+.submit-btn {
+  position: relative;
+  z-index: 100 !important;
+  pointer-events: auto !important;
+}
