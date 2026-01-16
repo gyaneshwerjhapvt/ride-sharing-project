@@ -26,7 +26,7 @@ export class UserAuthComponent {
   authForm = this.fb.group({
     full_name: [''],
     email_username: ['', [Validators.required]],
-    phone: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+    phone: ['', [Validators.pattern('^[0-9]{10}$')]],
     password: ['',[Validators.required, Validators.minLength(6)]],
     role: ['rider'],
     license_number: ['']

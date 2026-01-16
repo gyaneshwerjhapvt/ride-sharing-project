@@ -5,16 +5,19 @@
   </div>
 
   <div class="form-container">
-    <input type="text" placeholder="Vehicle Number (Plate)" 
+    <input type="text" placeholder="Vehicle Number (Plate)"
            [(ngModel)]="newVehicle.vehicleNumber" required>
-    <input type="text" placeholder="Vehicle Make (e.g., Toyota)" 
+    <input type="text" placeholder="Vehicle Make (e.g., Toyota)"
            [(ngModel)]="newVehicle.vehicleType" required>
-    <input type="text" placeholder="Vehicle Model (e.g., Camry)" 
+    <input type="text" placeholder="Vehicle Model (e.g., Camry)"
            [(ngModel)]="newVehicle.driverName">
-    <input type="number" placeholder="Year" 
+    <input type="number" placeholder="Year"
            [(ngModel)]="newVehicle.capacity" min="1900" max="2030">
     <button (click)="addVehicle()" class="btn-primary">
       <i class="fas fa-plus"></i> Register Vehicle
+    </button>
+    <button (click)="loadVehicle()" class="btn-secondary" style="margin-left: 10px;">
+      <i class="fas fa-eye"></i> View My Vehicles
     </button>
   </div>
 

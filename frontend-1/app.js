@@ -105,11 +105,9 @@ document.getElementById("regForm").onsubmit = async (e) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    currentUser = data.user;
-    updateUI(data.user);
     closeModal("registerModal");
     showNotification(
-      `Welcome to SwiftRide, ${data.user.full_name}!`,
+      `Registration successful! Please login with your email and password.`,
       "success"
     );
     document.getElementById("regForm").reset();
@@ -272,7 +270,7 @@ const loadMyRides = async () => {
   } catch (err) {
     console.error("Error loading rides:", err);
   }
-}
+};
 
 const loadAvailableRides = async () => {
   if (!currentUser || currentUser.role !== "driver") return;
@@ -316,7 +314,7 @@ const loadAvailableRides = async () => {
   } catch (err) {
     console.error("Error loading available rides:", err);
   }
-}
+};
 
 const loadMyAcceptedRides = async () => {
   if (!currentUser || currentUser.role !== "driver") return;
@@ -364,7 +362,7 @@ const loadMyAcceptedRides = async () => {
   } catch (err) {
     console.error("Error loading accepted rides:", err);
   }
-}
+};
 
 const acceptRide = async (rideId) => {
   if (!currentUser || currentUser.role !== "driver") return;
@@ -378,7 +376,7 @@ const acceptRide = async (rideId) => {
     loadAvailableRides();
     loadMyAcceptedRides();
   } catch {}
-}
+};
 
 const completeRide = async (rideId) => {
   try {
@@ -387,7 +385,7 @@ const completeRide = async (rideId) => {
     if (currentUser.role === "driver") loadMyAcceptedRides();
     else loadMyRides();
   } catch {}
-}
+};
 
 const cancelRide = async (rideId) => {
   if (!confirm("Are you sure you want to cancel this ride?")) return;
@@ -397,7 +395,7 @@ const cancelRide = async (rideId) => {
     if (currentUser.role === "driver") loadMyAcceptedRides();
     else loadMyRides();
   } catch {}
-}
+};
 
 const viewAllRides = async () => {
   try {
@@ -440,7 +438,7 @@ const viewAllRides = async () => {
     `;
     openModal("allRidesModal");
   } catch {}
-}
+};
 
 const openVehicleRegistration = () => {
   if (!currentUser || currentUser.role !== "driver")
@@ -519,7 +517,7 @@ const loadMyVehicle = async () => {
   } catch (err) {
     console.error("Error loading vehicle:", err);
   }
-}
+};
 
 const openPaymentModal = () => {
   if (!currentUser) return;
@@ -550,12 +548,10 @@ document.getElementById("paymentForm").onsubmit = async (e) => {
     const xmlText = await soapFetch(envelope, "createPaymentRequest");
     console.log("SOAP Response:", xmlText);
 
-    if (xmlText.includes("SUCCESS") || xmlText.includes("completed")) {
-      showNotification("Payment processed successfully!", "success");
-      closeModal("paymentModal");
-      document.getElementById("paymentForm").reset();
-    } else if (xmlText.includes("Fault") || xmlText.includes("Error")) {
-      const errorMatch = xmlText.match(/<faultstring>(.*?)<\/faultstring>/i);
+    if (xmlText.includes("Fault") || xmlText.includes("Error")) {
+      const errorMatch =
+        xmlText.match(/<faultstring>(.*?)<\/faultstring>/i) ||
+        xmlText.match(/<soap:Text>(.*?)<\/soap:Text>/i);
       showNotification(
         `Payment failed: ${
           errorMatch ? errorMatch[1] : "Payment processing failed"
@@ -563,10 +559,15 @@ document.getElementById("paymentForm").onsubmit = async (e) => {
         "error"
       );
     } else {
+      // Assume success if no fault
+      const txnMatch = xmlText.match(/<transaction_id>(.*?)<\/transaction_id>/);
+      const txnId = txnMatch ? txnMatch[1] : "N/A";
       showNotification(
-        "Payment response unclear. Check console for details.",
-        "warning"
+        `Payment completed successfully! Transaction ID: ${txnId}`,
+        "success"
       );
+      closeModal("paymentModal");
+      document.getElementById("paymentForm").reset();
     }
   } catch {}
 };
@@ -648,4 +649,4 @@ const viewMyRatings = async () => {
         : '<p class="text-muted">No ratings received yet.</p>';
     openModal("ratingsViewModal");
   } catch {}
-}
+};

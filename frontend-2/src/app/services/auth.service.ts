@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 export interface User {
   user_id: number;
@@ -10,17 +11,21 @@ export interface User {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private currentUser = signal<User | null>(null);
-  
+
   user = this.currentUser.asReadonly();
+
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 
   setUser(user: User): void {
     this.currentUser.set(user);
     // Store in localStorage for persistence
-    localStorage.setItem('currentUser', JSON.stringify(user));
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('currentUser', JSON.stringify(user));
+    }
   }
 
   getUser(): User | null {
@@ -41,18 +46,22 @@ export class AuthService {
 
   logout(): void {
     this.currentUser.set(null);
-    localStorage.removeItem('currentUser');
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('currentUser');
+    }
   }
 
   loadUserFromStorage(): void {
-    const stored = localStorage.getItem('currentUser');
-    if (stored) {
-      try {
-        const user = JSON.parse(stored);
-        this.currentUser.set(user);
-      } catch (e) {
-        console.error('Error loading user from storage:', e);
-        localStorage.removeItem('currentUser');
+    if (isPlatformBrowser(this.platformId)) {
+      const stored = localStorage.getItem('currentUser');
+      if (stored) {
+        try {
+          const user = JSON.parse(stored);
+          this.currentUser.set(user);
+        } catch (e) {
+          console.error('Error loading user from storage:', e);
+          localStorage.removeItem('currentUser');
+        }
       }
     }
   }
