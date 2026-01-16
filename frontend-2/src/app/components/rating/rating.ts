@@ -1,15 +1,17 @@
 import { Component, Input, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 import { RatingService } from '../../services/rating';
 import { Rating } from '../../models/rating.model';
 
 @Component({
   selector: 'app-rating',
   standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './rating.component.html',
-  styleUrls: ['./rating.component.scss'],
+  imports: [CommonModule, FormsModule, HttpClientModule],
+  templateUrl: './rating.html',
+  styleUrls: ['./rating.css'],
+  providers: [RatingService]
 })
 export class RatingComponent {
   private ratingService = inject(RatingService);
@@ -49,11 +51,11 @@ export class RatingComponent {
     };
 
     this.ratingService.submitRating(newRating).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         alert('Rating submitted successfully!');
         this.isSubmitting.set(false);
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Submission failed', err);
         this.isSubmitting.set(false);
       },

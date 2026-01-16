@@ -1,0 +1,37 @@
+<h2>Vehicle Management</h2>
+
+<div class="form-container">
+  <input type="text" placeholder="Vehicle Number"
+         [(ngModel)]="newVehicle.vehicleNumber">
+
+  <input type="text" placeholder="Vehicle Type"
+         [(ngModel)]="newVehicle.vehicleType">
+
+  <input type="text" placeholder="Driver Name"
+         [(ngModel)]="newVehicle.driverName">
+
+  <input type="number" placeholder="Capacity"
+         [(ngModel)]="newVehicle.capacity">
+
+  <button (click)="addVehicle()">Add Vehicle</button>
+</div>
+
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Vehicle No</th>
+    <th>Type</th>
+    <th>Driver</th>
+    <th>Capacity</th>
+    <th>Status</th>
+  </tr>
+
+  <tr *ngFor="let v of vehicles">
+    <td>{{ v.id }}</td>
+    <td>{{ v.vehicleNumber }}</td>
+    <td>{{ v.vehicleType }}</td>
+    <td>{{ v.driverName }}</td>
+    <td>{{ v.capacity }}</td>
+    <td>{{ v.status }}</td>
+  </tr>
+</table>
