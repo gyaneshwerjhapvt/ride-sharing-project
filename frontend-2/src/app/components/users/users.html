@@ -1,0 +1,78 @@
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="card-header">
+      <h2>{{ isLoginMode() ? 'Welcome Back' : 'Get Started' }}</h2>
+      <p class="subtitle">{{ isLoginMode() ? 'Sign in to manage your rides' : 'Join the SwiftRide network today' }}</p>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="alert alert-error">
+        <span class="icon">⚠️</span> {{ errorMessage() }}
+      </div>
+    }
+
+    <form [formGroup]="authForm" (ngSubmit)="onSubmit()" class="modern-form">
+      @if (!isLoginMode()) {
+        <div class="form-field">
+          <label>Full Name</label>
+          <input type="text" formControlName="full_name" placeholder="John Doe">
+        </div>
+
+        <div class="form-field">
+          <label>Phone Number</label>
+          <input type="text" formControlName="phone"  maxlength="10">
+          @if (authForm.get('phone')?.touched && authForm.get('phone')?.invalid) {
+            <small class="validation-msg">Enter exactly 10 digits</small>
+          }
+        </div>
+      }
+
+      <div class="form-field">
+        <label>Email Address</label>
+        <div class="input-group">
+          <input type="text" formControlName="email_username" placeholder="username">
+          <span class="addon">@gmail.com</span>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label>Password</label>
+        <input type="password" formControlName="password" placeholder="••••••••">
+        @if (!isLoginMode() && authForm.get('password')?.touched && authForm.get('password')?.invalid) {
+          <small class="validation-msg">Requires 8+ chars, upper/lower, number, & symbol</small>
+        }
+      </div>
+
+      @if (!isLoginMode()) {
+        <div class="form-field">
+          <label>I want to...</label>
+          <select formControlName="role">
+            <option value="rider">Request Rides</option>
+            <option value="driver">Earn by Driving</option>
+          </select>
+        </div>
+
+        @if (authForm.get('role')?.value === 'driver') {
+          <div class="form-field animate-in">
+            <label>Driver's License Number</label>
+            <input type="text" formControlName="license_number" placeholder="Enter license ID">
+          </div>
+        }
+      }
+
+      <button type="submit" class="submit-btn" [disabled]="authForm.invalid || isLoading()">
+        @if (isLoading()) {
+          <span class="spinner"></span> Validating...
+        } @else {
+          {{ isLoginMode() ? 'Sign In' : 'Create Account' }}
+        }
+      </button>
+    </form>
+
+    <div class="card-footer">
+      <button (click)="toggleMode()" class="ghost-btn">
+        {{ isLoginMode() ? "Don't have an account? Sign Up" : "Already registered? Log In" }}
+      </button>
+    </div>
+  </div>
+</div>
