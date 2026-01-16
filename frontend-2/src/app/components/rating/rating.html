@@ -18,10 +18,10 @@
   <div class="modal-content">
     <span class="close" (click)="closeAddModal()">&times;</span>
     <h3><i class="fas fa-star"></i> Add Rating</h3>
-    <form (submit)="submitRating()">
-      <input type="number" [(ngModel)]="newRating.ride_id" placeholder="Ride ID" required>
-      <input type="number" [(ngModel)]="newRating.given_to" placeholder="User ID to Rate" required>
-      <select [(ngModel)]="newRating.score" required>
+    <form (ngSubmit)="submitRating()">
+      <input type="number" name="ride_id" [(ngModel)]="newRating.ride_id" placeholder="Ride ID" required>
+      <input type="number" name="given_to" [(ngModel)]="newRating.given_to" placeholder="User ID to Rate" required>
+      <select name="score" [(ngModel)]="newRating.score" required>
         <option value="">Select Rating</option>
         <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
         <option value="4">⭐⭐⭐⭐ Good</option>
@@ -29,7 +29,7 @@
         <option value="2">⭐⭐ Poor</option>
         <option value="1">⭐ Very Poor</option>
       </select>
-      <textarea [(ngModel)]="newRating.comment" placeholder="Comment (optional)" rows="3"></textarea>
+      <textarea name="comment" [(ngModel)]="newRating.comment" placeholder="Comment (optional)" rows="3"></textarea>
       <button type="submit" class="btn-primary btn-block">Submit Rating (GraphQL)</button>
       <button type="button" class="btn-link" (click)="closeAddModal()">Cancel</button>
     </form>
