@@ -1,6 +1,22 @@
 import { Vehicle, Rating, User } from "../models/index.js";
 
 const resolvers = {
+  // (parent, args, context, info)
+  // Result from the parent resolver
+  // In root resolvers (Query/Mutation level),
+  // the parent parameter is always null or undefined because there's no parent field above the root.
+
+  // learning
+
+  // With all parameters visible:
+  // async (parent, args, context, info) => {
+  //   const { driver_id } = args;  // Extract from args
+  //   // parent is null/undefined here (root resolver)
+  //   // context could contain auth info, db connections
+  //   // info contains GraphQL schema metadata
+  //   return await Vehicle.findOne({ where: { driver_id } });
+  // }
+
   Query: {
     getVehicleByDriver: async (_, { driver_id }) => {
       return await Vehicle.findOne({ where: { driver_id } });

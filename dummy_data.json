@@ -1,0 +1,186 @@
+{
+  "user_registration_rider": {
+    "full_name": "John Doe",
+    "email": "john.doe@gmail.com",
+    "phone": "9876543210",
+    "password": "password123",
+    "role": "rider",
+    "license_number": null
+  },
+
+  "user_registration_driver": {
+    "full_name": "Mike Johnson",
+    "email": "mike.johnson@gmail.com",
+    "phone": "9123456789",
+    "password": "password123",
+    "role": "driver",
+    "license_number": "DL123456789"
+  },
+
+  "user_login": {
+    "email": "john.doe@gmail.com",
+    "password": "password123"
+  },
+
+  "ride_request": {
+    "rider_id": 1,
+    "pickup_location": "Connaught Place, New Delhi",
+    "drop_location": "India Gate, New Delhi"
+  },
+
+  "ride_accept": {
+    "driver_id": 2
+  },
+
+  "vehicle_registration_graphql": {
+    "query": "mutation RegisterVehicle($input: VehicleInput!) { registerVehicle(input: $input) { vehicle_id make model plate_number color year } }",
+    "variables": {
+      "input": {
+        "driver_id": 2,
+        "make": "Toyota",
+        "model": "Camry",
+        "plate_number": "DL01AB1234",
+        "color": "White",
+        "year": 2020
+      }
+    }
+  },
+
+  "rating_add_graphql": {
+    "query": "mutation AddRating($input: RatingInput!) { addRating(input: $input) { rating_id ride_id score comment } }",
+    "variables": {
+      "input": {
+        "ride_id": 1,
+        "given_by": 1,
+        "given_to": 2,
+        "score": 5,
+        "comment": "Excellent service!"
+      }
+    }
+  },
+
+  "vehicle_query_graphql": {
+    "query": "query GetVehicleByDriver($driver_id: Int!) { getVehicleByDriver(driver_id: $driver_id) { vehicle_id make model plate_number color year } }",
+    "variables": {
+      "driver_id": 2
+    }
+  },
+
+  "ratings_query_graphql": {
+    "query": "query GetRatingsByUser($user_id: Int!) { getRatingsByUser(user_id: $user_id) { rating_id ride_id given_by score comment } }",
+    "variables": {
+      "user_id": 2
+    }
+  },
+
+  "vehicle_update_graphql": {
+    "query": "mutation UpdateVehicle($driver_id: Int!, $input: VehicleUpdateInput!) { updateVehicle(driver_id: $driver_id, input: $input) { vehicle_id make model plate_number color year } }",
+    "variables": {
+      "driver_id": 2,
+      "input": {
+        "color": "Black",
+        "year": 2021
+      }
+    }
+  },
+
+  "vehicle_delete_graphql": {
+    "query": "mutation DeleteVehicle($driver_id: Int!) { deleteVehicle(driver_id: $driver_id) }",
+    "variables": {
+      "driver_id": 2
+    }
+  },
+
+  "soap_payment_xml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tns=\"http://localhost:3000/soap/payment\">\n  <soap:Body>\n    <tns:createPaymentRequest>\n      <tns:ride_id>1</tns:ride_id>\n      <tns:amount>150.00</tns:amount>\n      <tns:method>credit_card</tns:method>\n    </tns:createPaymentRequest>\n  </soap:Body>\n</soap:Envelope>",
+
+  "test_users": [
+    {
+      "role": "rider",
+      "name": "John Doe",
+      "email": "john.doe@gmail.com",
+      "phone": "9876543210",
+      "password": "password123"
+    },
+    {
+      "role": "rider",
+      "name": "Jane Smith",
+      "email": "jane.smith@gmail.com",
+      "phone": "8765432109",
+      "password": "password123"
+    },
+    {
+      "role": "driver",
+      "name": "Mike Johnson",
+      "email": "mike.johnson@gmail.com",
+      "phone": "9123456789",
+      "password": "password123",
+      "license": "DL123456789"
+    },
+    {
+      "role": "driver",
+      "name": "Sarah Wilson",
+      "email": "sarah.wilson@gmail.com",
+      "phone": "8234567891",
+      "password": "password123",
+      "license": "DL987654321"
+    }
+  ],
+
+  "sample_locations": [
+    "Connaught Place, New Delhi",
+    "India Gate, New Delhi",
+    "Karol Bagh, New Delhi",
+    "Lajpat Nagar, New Delhi",
+    "Saket, New Delhi",
+    "Chandni Chowk, New Delhi",
+    "Rajouri Garden, New Delhi"
+  ],
+
+  "sample_vehicles": [
+    {
+      "make": "Toyota",
+      "model": "Camry",
+      "plate": "DL01AB1234",
+      "color": "White",
+      "year": 2020
+    },
+    {
+      "make": "Honda",
+      "model": "City",
+      "plate": "DL02CD5678",
+      "color": "Black",
+      "year": 2019
+    },
+    {
+      "make": "Maruti",
+      "model": "Swift",
+      "plate": "DL03EF9012",
+      "color": "Red",
+      "year": 2021
+    }
+  ],
+
+  "api_endpoints": {
+    "base_url": "http://localhost:3000",
+
+    "user_endpoints": {
+      "register": "POST /api/users/register",
+      "login": "POST /api/users/login",
+      "get_user": "GET /api/users/{id}",
+      "delete_user": "DELETE /api/users/{id}"
+    },
+
+    "ride_endpoints": {
+      "request": "POST /api/rides/request",
+      "get_all": "GET /api/rides",
+      "get_by_id": "GET /api/rides/{ride_id}",
+      "accept": "PUT /api/rides/accept/{ride_id}",
+      "complete": "PUT /api/rides/complete/{ride_id}",
+      "cancel": "PUT /api/rides/cancel/{ride_id}"
+    },
+
+    "graphql_endpoint": "POST /graphql",
+
+    "soap_endpoint": "POST /soap/payment"
+  }
+}

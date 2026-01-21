@@ -1,0 +1,400 @@
+{
+  "info": {
+    "name": "SwiftRide API Collection",
+    "description": "Complete API collection for SwiftRide ride-sharing platform with dummy data",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "User Management",
+      "item": [
+        {
+          "name": "Register Rider",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"John Doe\",\n  \"email\": \"john.doe@gmail.com\",\n  \"phone\": \"9876543210\",\n  \"password\": \"password123\",\n  \"role\": \"rider\",\n  \"license_number\": null\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/users/register",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["api", "users", "register"]
+            }
+          }
+        },
+        {
+          "name": "Register Driver",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Mike Johnson\",\n  \"email\": \"mike.johnson@gmail.com\",\n  \"phone\": \"9123456789\",\n  \"password\": \"password123\",\n  \"role\": \"driver\",\n  \"license_number\": \"DL123456789\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/users/register",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["api", "users", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.doe@gmail.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/users/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["api", "users", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/users/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["api", "users", "1"]
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/users/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["api", "users", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ride Management",
+      "item": [
+        {
+          "name": "Request Ride",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rider_id\": 1,\n  \"pickup_location\": \"Connaught Place, New Delhi\",\n  \"drop_location\": \"India Gate, New Delhi\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/rides/request",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["api", "rides", "request"]
+            }
+          }
+        },
+        {
+          "name": "Get All Rides",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/rides",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["api", "rides"]
+            }
+          }
+        },
+        {
+          "name": "Get Ride by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/rides/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["api", "rides", "1"]
+            }
+          }
+        },
+        {
+          "name": "Accept Ride",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"driver_id\": 2\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/api/rides/accept/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["api", "rides", "accept", "1"]
+            }
+          }
+        },
+        {
+          "name": "Complete Ride",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/rides/complete/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["api", "rides", "complete", "1"]
+            }
+          }
+        },
+        {
+          "name": "Cancel Ride",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3000/api/rides/cancel/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["api", "rides", "cancel", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "GraphQL API",
+      "item": [
+        {
+          "name": "Register Vehicle",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation RegisterVehicle($input: VehicleInput!) { registerVehicle(input: $input) { vehicle_id make model plate_number color year } }\",\n  \"variables\": {\n    \"input\": {\n      \"driver_id\": 2,\n      \"make\": \"Toyota\",\n      \"model\": \"Camry\",\n      \"plate_number\": \"DL01AB1234\",\n      \"color\": \"White\",\n      \"year\": 2020\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/graphql",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["graphql"]
+            }
+          }
+        },
+        {
+          "name": "Get Vehicle by Driver",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query GetVehicleByDriver($driver_id: Int!) { getVehicleByDriver(driver_id: $driver_id) { vehicle_id make model plate_number color year } }\",\n  \"variables\": {\n    \"driver_id\": 2\n  }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/graphql",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["graphql"]
+            }
+          }
+        },
+        {
+          "name": "Add Rating",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation AddRating($input: RatingInput!) { addRating(input: $input) { rating_id ride_id score comment } }\",\n  \"variables\": {\n    \"input\": {\n      \"ride_id\": 1,\n      \"given_by\": 1,\n      \"given_to\": 2,\n      \"score\": 5,\n      \"comment\": \"Excellent service!\"\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/graphql",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["graphql"]
+            }
+          }
+        },
+        {
+          "name": "Get Ratings by User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query GetRatingsByUser($user_id: Int!) { getRatingsByUser(user_id: $user_id) { rating_id ride_id given_by score comment } }\",\n  \"variables\": {\n    \"user_id\": 2\n  }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/graphql",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["graphql"]
+            }
+          }
+        },
+        {
+          "name": "Update Vehicle",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation UpdateVehicle($driver_id: Int!, $input: VehicleUpdateInput!) { updateVehicle(driver_id: $driver_id, input: $input) { vehicle_id make model plate_number color year } }\",\n  \"variables\": {\n    \"driver_id\": 2,\n    \"input\": {\n      \"color\": \"Black\",\n      \"year\": 2021\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/graphql",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["graphql"]
+            }
+          }
+        },
+        {
+          "name": "Delete Vehicle",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation DeleteVehicle($driver_id: Int!) { deleteVehicle(driver_id: $driver_id) }\",\n  \"variables\": {\n    \"driver_id\": 2\n  }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3000/graphql",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["graphql"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "SOAP API",
+      "item": [
+        {
+          "name": "Process Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml; charset=utf-8"
+              },
+              {
+                "key": "SOAPAction",
+                "value": "createPaymentRequest"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tns=\"http://localhost:3000/soap/payment\">\n  <soap:Body>\n    <tns:createPaymentRequest>\n      <tns:ride_id>1</tns:ride_id>\n      <tns:amount>150.00</tns:amount>\n      <tns:method>credit_card</tns:method>\n    </tns:createPaymentRequest>\n  </soap:Body>\n</soap:Envelope>"
+            },
+            "url": {
+              "raw": "http://localhost:3000/soap/payment",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["soap", "payment"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ]
+}
